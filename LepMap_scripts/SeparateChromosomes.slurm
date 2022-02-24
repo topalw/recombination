@@ -26,7 +26,7 @@ theta=${3:-0.03}
 out="${1}_lod${lod}_theta${theta}_map.txt"
 
 ### Separate Chromosomes 
-java -cp ../Lep_MAP3/bin SeparateChromosomes2 data=${1} lodLimit=${lod} numThreads=24 sizeLimit=3 theta=${theta} > ${out}
+java -cp ~/Lep_MAP3/bin SeparateChromosomes2 data=${1} lodLimit=${lod} numThreads=24 sizeLimit=3 theta=${theta} > ${out}
 
 ### make counts and fix it 
 fixedfile="${out}.counts.fixed" 

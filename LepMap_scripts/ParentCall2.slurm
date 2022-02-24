@@ -25,9 +25,9 @@ out="${3:-$vcf}.call"
 out2="${3:-$vcf}_f.call"
 
 # make dataset
-java -cp ../Lep_MAP3/bin ParentCall2 halfSibs=1 data=${ped} vcfFile=${vcf} removeNonInformative=1 > ${out}
+java -cp ~/Lep_MAP3/bin ParentCall2 halfSibs=1 data=${ped} vcfFile=${vcf} removeNonInformative=1 > ${out}
 # Filter
-java -cp ../Lep_MAP3/bin Filtering2 data=${out} dataTolerance=0.01 > ${out2}
+java -cp ~/Lep_MAP3/bin Filtering2 data=${out} dataTolerance=0.01 > ${out2}
 
 # make snps.txt
 awk '(NR>=7)' ${out2} | cut -f 1,2 > ${out2}.snps.txt
