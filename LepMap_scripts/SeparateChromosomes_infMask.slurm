@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --partition cpu
-#SBATCH --time=72:00:00
+#SBATCH --time=12:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=48
+#SBATCH --cpus-per-task=24
 #SBATCH --mem=120G
 #SBATCH --job-name=SepChr1
 #SBATCH --account jgoudet_barn_owl
@@ -17,16 +17,17 @@ start=`date +%s`
 ### make sure there is a filename provided # 
 if (( $# < 1  || $# > 3 ))
 then
-	echo "USAGE is sbatch SeparateChromosomes.slurm withPath/File LODscore theta"
+	echo "USAGE is sbatch SeparateChromosomes.slurm withPath/FilePrefix LODscore mask theta"
 	exit
 fi
 
 lod=${2:-10}
-theta=${3:-0.03}
-out="${1}_lod${lod}_theta${theta}_map.txt"
+theta=${4:-0.03}
+mask=${3:-1}
+out="${1}_lod${lod}_theta${theta}_mask${mask}_map.txt"
 
 ### Separate Chromosomes 
-java -cp ~/Lep_MAP3/bin SeparateChromosomes2 data=${1} lodLimit=${lod} numThreads=48 sizeLimit=5 theta=${theta} > ${out}
+java -cp ../Lep_MAP3/bin SeparateChromosomes2 data="${1}"_f.call lodLimit=${lod} numThreads=24 sizeLimit=3 theta=${theta} informativeMask=${mask} > ${out}
 
 ### make counts and fix it 
 fixedfile="${out}.counts.fixed" 

@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --partition cpu
-#SBATCH --time=72:00:00
+#SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=48
 #SBATCH --mem=120G
-#SBATCH --job-name=SepChr1
+#SBATCH --job-name=JoinSing
 #SBATCH --account jgoudet_barn_owl
 #SBATCH --mail-type=FAIL
 #SBATCH --mail-user=alexandros.topaloudis@unil.ch
@@ -17,16 +17,14 @@ start=`date +%s`
 ### make sure there is a filename provided # 
 if (( $# < 1  || $# > 3 ))
 then
-	echo "USAGE is sbatch SeparateChromosomes.slurm withPath/File LODscore theta"
+	echo "USAGE is sbatch JoinSingles.slurm withPath/File withPath/map LODscore"
 	exit
 fi
 
-lod=${2:-10}
-theta=${3:-0.03}
-out="${1}_lod${lod}_theta${theta}_map.txt"
-
+lod=${3:-10}
+out="${2}_joinSingles.txt"
 ### Separate Chromosomes 
-java -cp ~/Lep_MAP3/bin SeparateChromosomes2 data=${1} lodLimit=${lod} numThreads=48 sizeLimit=5 theta=${theta} > ${out}
+java -cp ~/Lep_MAP3/bin JoinSingles2All data=${1} lodLimit=${lod} map=${2} numThreads=48 iterate=1 > ${out}
 
 ### make counts and fix it 
 fixedfile="${out}.counts.fixed" 
