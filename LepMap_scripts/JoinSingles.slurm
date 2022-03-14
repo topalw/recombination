@@ -32,7 +32,7 @@ if [ -e  $fixedfile ]
 then 
 	echo "Fixed positions found"
 else
-	sort $out | uniq -c | sort > "${out}.counts" 
+	cut -f 1 ${out}| sort | uniq -c | sort > "${out}.counts" 
 	tail -n +2 "${out}.counts" | sed -e 's/^ *//g' > ${fixedfile}
 	rm "${out}.counts"
 fi
@@ -41,7 +41,7 @@ fi
 snpsfile="${1}.snps.txt"
 if [ -e ${snpsfile} ]
 then 
-	paste "${1}.snps.txt" "${out}" | awk '($3>0)' > "${out}.positions"
+	paste "${1}.snps.txt" `cut -f 1 ${out}` | awk '($3>0)' > "${out}.positions"
 else
 	awk '(NR>=7)' "${1}"_f.call | cut -f 1,2 > ${snpsfile} 
 	paste "${1}.snps.txt" "${out}" | awk '($3>0)' > "${out}.positions"
