@@ -46,10 +46,10 @@ if (length(args)==0) {
   args[3] = 15
 }
 
-lods <- seq(args[2],args[3]) # Modify
+lods <- seq(args[2],args[3])
 # naming scheme 
 prefix <- args[1]
-
+#prefix <- '2nd_filtering/all_maf20_miss05_f.call'
 ### ------------ POSITIONS ---------------- ###
 
 # make df to fill
@@ -64,7 +64,7 @@ pos.dat <- data.frame('lod'= rep(0,1),
 
 # lod range
 # real distribution of markers 
-real.dist <- read.csv(paste(prefix,'dist.csv',sep=''),h=F)
+real.dist <- read.csv(paste(prefix,'_dist.csv',sep=''),h=F)
 colnames(real.dist) <- c('markers', 'scaf')
 real.dist <- real.dist[order(real.dist$markers, decreasing = TRUE),]
 real.dist$LG <- 1:nrow(real.dist)
@@ -79,7 +79,7 @@ for( theta in c(0.03)){
 for(lod in lods){
   # read positions file  
   pos <- read.delim(h=F, file = 
-          paste(prefix,'lod',lod,'_theta',theta,'_map.txt.positions',
+          paste(prefix,'_lod',lod,'_theta',theta,'_map.txt.positions',
                 sep=''))
   colnames(pos) <- c('scaf','pos','LG')
   # get max LGs 
@@ -162,7 +162,7 @@ theta = 0.03
     tmp.dat <- tmp.dat1[tmp.dat1$lod==lod,]
     gg7 <- ggplot(data=tmp.dat, aes(x=LG, y=markers, fill=scaf)) +
       geom_bar(stat='identity') + 
-      theme_minimal(axis.text.x = element_text(size = 0.6,angle=45)) + 
+      theme_minimal() + 
       ggtitle(paste('lod=',lod, sep=''))
     gg8 <- ggplot(data=real.dist, aes(x=LG, y=markers, fill=scaf)) +
       geom_bar(stat='identity') + 
@@ -179,7 +179,7 @@ theta = 0.03
               ncol=2, nrow=4)
 
 # plot 
-pdf(paste(prefix,'theta',theta,'.pdf',sep=''), width=18, height=10)
+pdf(paste(prefix,'_theta',theta,'.pdf',sep=''), width=18, height=10)
 title1 <- strsplit(prefix, split='/')[[1]][-1]
     
     annotate_figure(fig1, top = text_grob(paste(title1), face='bold'))
@@ -199,17 +199,20 @@ count.uniq <- function(df){
   return(as.numeric(uniq.vec))
 }
 
-pdf(paste(prefix,'theta',theta,'_diagnostics.pdf',sep=''),width=14,height=8)
-par(mfrow=c(1,2))
+pal1 <- RColorBrewer::brewer.pal(length(lods),'Set2')
+pdf(paste(prefix,'_theta',theta,'_diagnostics.pdf',sep=''),width=14,height=8)
 for(lod in lods){
-  tmp <- as.numeric(table(tmp.dat1$LG[tmp.dat1$lod==lod & tmp.dat1$theta==theta])) 
-  plot(y=tmp,x=seq(1:maxLGs),
-       pch=16,ylab='# of Scaffolds in LG', xlab='LG', main=paste('lod',lod,sep='='))
-  abline(h=1, lty=2)
-  tmp2 <- cumsum(count.uniq(tmp.dat1[tmp.dat1$lod==lod,]))
-  plot(tmp2~seq(1:maxLGs),pch=16,ylab='# of new scaffolds in LG', xlab='LG', 
-       main=paste('lod',lod,sep='='))
-  abline(a=0,b=1,lty=2)
+    tmp2 <- cumsum(count.uniq(tmp.dat1[tmp.dat1$lod==lod,]))
+  if(lod == lods[1]){
+    plot(tmp2~seq(1:maxLGs),ylab='# of new scaffolds in LG', xlab='LG', 
+         main='cumulative # of Scafs in LGs', type='l',lwd=3, col=pal1[1],
+         ylim=c(0,max(tmp2)))
+    abline(a=0,b=1,lty=2)
+  } else {
+    lines(y=tmp2 ,x=seq(1:maxLGs), type='l', lwd=3, col=pal1[which(lods==lod)])
+  }
 }
+legend('bottomright', lty=rep(1,length(lods)), lwd=rep(3,length(lods)),
+       col=pal1, legend = lods, cex=0.6)
 dev.off()
   
