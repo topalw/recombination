@@ -45,7 +45,7 @@ if [ -e ${snpsfile} ]
 then 
 	paste "${1}.snps.txt" "${out}" | awk '($3>0)' > "${out}.positions"
 else
-	awk '(NR>=7)' "${1}"_f.call | cut -f 1,2 > ${snpsfile} 
+	awk '(NR>=7)' ${1} | cut -f 1,2 > ${snpsfile} 
 	paste "${1}.snps.txt" "${out}" | awk '($3>0)' > "${out}.positions"
 fi
 

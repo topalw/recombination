@@ -47,6 +47,7 @@ if (length(args)==0) {
 }
 
 lods <- seq(args[2],args[3])
+print(lods)
 # naming scheme 
 prefix <- args[1]
 #prefix <- '2nd_filtering/all_maf20_miss05_f.call'
@@ -71,7 +72,7 @@ real.dist$LG <- 1:nrow(real.dist)
 
 # how many LGs to consider? 
 n.lgs <-nrow(real.dist)
-n.lgs <- 100
+n.lgs <- 50
 # no reason to consider more than the # of scafs in vcf?
 
 for( theta in c(0.03)){
@@ -120,7 +121,6 @@ theta = 0.03
   tmp.dat1 <- pos.dat[pos.dat$theta==theta,]
 #  for(lod in unique(tmp.dat1$lod)){
   tmp.lods <- unique(tmp.dat1$lod)
-  tmp.lods
   start.index <- 1
   lod = tmp.lods[start.index]
     tmp.dat <- tmp.dat1[tmp.dat1$lod==lod,]

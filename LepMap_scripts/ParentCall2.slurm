@@ -31,3 +31,4 @@ java -cp ~/Lep_MAP3/bin Filtering2 data=${out} dataTolerance=0.01 > ${out2}
 
 # make snps.txt
 awk '(NR>=7)' ${out2} | cut -f 1,2 > ${out2}.snps.txt
+tail -n +2 ${out2}.snps.txt | cut -f 1 | sort | uniq -c | sed 's/^ *//g' |sed 's/ /,/g' > ${out2}_dist.csv
