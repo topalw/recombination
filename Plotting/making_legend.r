@@ -2,7 +2,7 @@ setwd('C:/Users/topalw/Desktop/PhD/Analyses/2.recombination/LepMap/new_output/')
 
 lods <- 9:15
 # naming scheme 
-prefix <- '2nd_filtering/all_maf20_miss05_f.call'
+prefix <- '2nd_filtering/all_mi_maf10_miss05_f.call'
 
 ### ------------ FUNCTIONS ---------------- ###
 # FOR best lods make splitting/merging stats 
@@ -78,26 +78,46 @@ pos.dat <- pos.dat[2:nrow(pos.dat),]
 
 # Manually curate !!!
 #subset based on lod
-tmp2 <- pos.dat[pos.dat$lod ==12 & pos.dat$theta == 0.03,]
+tmp2 <- pos.dat[pos.dat$lod ==13 & pos.dat$theta == 0.03,]
 # count how many scaffolds / LG
 count <- data.frame('counts' = as.numeric(table(tmp2$LG)),
                     'new' = count.uniq(tmp2) 
 )
-goodLG <- row.names(count[which(count$new > 0 & count$counts < 4),])
+# this first step will get informative LGs with a single scaffold
+goodLG <- row.names(count[which(count$new > 0 & count$counts < 2),])
 # added the second of LG2 
 goodLG <- append(goodLG,tmp2$LG[tmp2$scaf=='Super-Scaffold_2'][2])
+goodLG <- as.numeric(goodLG)[order(as.numeric(goodLG))]
+goodLG
+plot(cumsum(count$new)~seq(1,200))
+abline(a=0,b=1)
+# Others - this will be to investigate informative LGs with > 1 scaffolds
+candidates <- rownames(count[which(count$new > 0 & count$counts > 1),])
+tmp2[tmp2$LG %in% candidates,]
+leg <- data.frame('lg' = goodLG,
+                  'scaf' = tmp2$scaf[tmp2$LG %in% goodLG])
 
+### manually add the chimeric LGs ###
+# lod12-maf20 -->
+# leg <- rbind(leg, data.frame('lg'=c(23,7,45),
+#                              'scaf'=c('Super-Scaffold_3;Super-Scaffold_49',
+#                                       'Super-Scaffold_22;Super-Scaffold_100000100066',
+#                                       'Super-Scaffold_42')))
+#lod13-maf20 --> 
+# LG 64 doesnt have enough of SS42 to warranty forcing it 
+# leg <- rbind(leg, data.frame('lg'=c(4,40),
+#                              'scaf'=c('Super-Scaffold_22;Super-Scaffold_100000100066',
+#                                       'Super-Scaffold_3;Super-Scaffold_49')
+#                              ))
+#lod12-maf10 --> 
+# leg <- rbind(leg, data.frame('lg'=c(1,33),
+#                              'scaf'=c('Super-Scaffold_22;Super-Scaffold_100000100066',
+#                                       'Super-Scaffold_3;Super-Scaffold_49')))
+#lod13-maf10 -->
+# leg <- rbind(leg, data.frame('lg'=c(1),
+#                              'scaf'=c('Super-Scaffold_22;Super-Scaffold_100000100066')))
 
-# still need to add double scaff LGs like SS22+ & SS3+SS49 
-# and any that bring a new LG to the situation
+write.csv(leg,paste(prefix,'_lod13_theta0.03.legend',sep=''), row.names = F, quote=F)
 
-# that means that we choose LGs that add new scaffold information + have < 4 
-# scaffolds inside. We have to manually add the 2nd SS2 LG in the list but this 
-# is the only concistent split we have observed. 
-# then we have to manual prune out markers from LGs that should not be there... 
-# ex. in no mi maf20 miss05 dataset in lod12 the LG7 can be modified to only include SS22.
-# and 100000100066  
-# EXTRAS lod12-maf20 --> LG7 -- SS22&1....66; LG23; LG45 -- SS42 
-#        lod13-maf20 --> LG4 -- SS22&1,...66; LG40; LG
 
 
