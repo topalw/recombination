@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --partition cpu
-#SBATCH --time=24:00:00
+#SBATCH --time=48:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=48
@@ -22,9 +22,9 @@ then
 fi
 
 lod=${3:-10}
-out="${2}_joinSingles.txt"
+out="${2}_joinSingles_${lod}.txt"
 ### Separate Chromosomes 
-java -cp ~/Lep_MAP3/bin JoinSingles2All data=${1} lodLimit=${lod} map=${2} numThreads=48 iterate=1 > ${out}
+java -cp ~/Lep_MAP3/bin JoinSingles2All data=${1} lodLimit=${lod} map=${2} numThreads=48 > ${out}
 
 ### make counts and fix it 
 fixedfile="${out}.counts.fixed" 
