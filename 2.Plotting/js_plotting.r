@@ -82,7 +82,7 @@ for( theta in c(0.03)){
 for(lod in lods){
   # read positions file  
   pos <- read.delim(h=F, file = 
-          paste(prefix,lod,'.txt.positions'
+          paste(prefix,lod,'.txt.positions',
                 sep=''))
   colnames(pos) <- c('scaf','pos','LG')
   # get max LGs 
