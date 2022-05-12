@@ -74,7 +74,7 @@ real.dist$LG <- 1:nrow(real.dist)
 
 # how many LGs to consider? 
 n.lgs <-nrow(real.dist)
-n.lgs <- 50
+n.lgs <- 100
 # no reason to consider more than the # of scafs in vcf?
 
 for( theta in c(0.03)){

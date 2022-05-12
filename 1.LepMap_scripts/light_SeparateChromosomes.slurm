@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --partition cpu
-#SBATCH --time=48:00:00
+#SBATCH --time=01:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=24
-#SBATCH --mem=120G
-#SBATCH --job-name=SepChr1
+#SBATCH --cpus-per-task=12
+#SBATCH --mem=60G
+#SBATCH --job-name=SepChr_l
 #SBATCH --account jgoudet_barn_owl
 #SBATCH --mail-type=FAIL
 #SBATCH --mail-user=alexandros.topaloudis@unil.ch
@@ -17,17 +17,16 @@ start=`date +%s`
 ### make sure there is a filename provided # 
 if (( $# < 1  || $# > 3 ))
 then
-	echo "USAGE is sbatch SeparateChromosomes.slurm withPath/File LODscore mask theta"
+	echo "USAGE is sbatch SeparateChromosomes.slurm withPath/File LODscore theta"
 	exit
 fi
 
 lod=${2:-10}
-theta=${4:-0.03}
-mask=${3:-1}
-out="${1}_lod${lod}_theta${theta}_mask${mask}_map.txt"
+theta=${3:-0.03}
+out="${1}_lod${lod}_theta${theta}_map.txt"
 
 ### Separate Chromosomes 
-java -cp ~/Lep_MAP3/bin SeparateChromosomes2 data=${1} lodLimit=${lod} numThreads=24 sizeLimit=3 theta=${theta} informativeMask=${mask} > ${out}
+java -cp ~/Lep_MAP3/bin SeparateChromosomes2 data=${1} lodLimit=${lod} numThreads=12 sizeLimit=3 theta=${theta} > ${out}
 
 ### make counts and fix it 
 fixedfile="${out}.counts.fixed" 
@@ -46,7 +45,7 @@ if [ -e ${snpsfile} ]
 then 
 	paste "${1}.snps.txt" "${out}" | awk '($3>0)' > "${out}.positions"
 else
-	awk '(NR>=7)' "${1}"_f.call | cut -f 1,2 > ${snpsfile} 
+	awk '(NR>=7)' ${1} | cut -f 1,2 > ${snpsfile} 
 	paste "${1}.snps.txt" "${out}" | awk '($3>0)' > "${out}.positions"
 fi
 
