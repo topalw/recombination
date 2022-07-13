@@ -1,10 +1,9 @@
 #!/bin/bash
 #SBATCH --partition cpu
-#SBATCH --time=48:00:00
+#SBATCH --time=72:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=24
-#SBATCH --mem=120G
+#SBATCH --cpus-per-task=48
 #SBATCH --job-name=SepChr1
 #SBATCH --account jgoudet_barn_owl
 #SBATCH --mail-type=FAIL
@@ -27,7 +26,7 @@ mask=${3:-1}
 out="${1}_lod${lod}_theta${theta}_mask${mask}_map.txt"
 
 ### Separate Chromosomes 
-java -cp ~/Lep_MAP3/bin SeparateChromosomes2 data=${1} lodLimit=${lod} numThreads=24 sizeLimit=3 theta=${theta} informativeMask=${mask} > ${out}
+java -cp ~/Lep_MAP3/bin SeparateChromosomes2 data=${1} lodLimit=${lod} numThreads=36 sizeLimit=3 theta=${theta} informativeMask=${mask} > ${out}
 
 ### make counts and fix it 
 fixedfile="${out}.counts.fixed" 
