@@ -1,44 +1,26 @@
-setwd('C:/Users/topalw/Desktop/1.pyrho/')
-#d <- read.delim('hyperparam/run1_extended.hyperparam')
-pop <-'pt'
-d <- read.table(paste0(pop,'_m126_mu46e9.hyperparam'),h=T)
-d <- d[order(d$Block_Penalty,as.numeric(d$Window_Size) ),]
-x <- seq(5,60,5)
-y <- seq(10,100,10)
-d.order <-  d[,c(1,2,3,4,5,9,10,11,12)]
-colnames(d.order)
-for(i in c(3:8)){
-  d.order[,i] <- order(d[,match(colnames(d.order)[i],
-                                colnames(d))],decreasing = T)
-}  
-# decreasing =F ordering for log
-d.order[,9] <- order(d[,12],decreasing = F)
-d.order
-for(i in 1:nrow(d.order)){
-  d.order$rank[i] <- sum(d.order[i,c(3:9)])
-}
-d.order[order(d.order$rank),c(1,2)]
-top <- head(d.order[order(d.order$rank),c(1,2)],15)
-top
+library(readr)
+library(dplyr)
+d <- read_delim('ch_m126.hyperparam')
+# get sum of correlations
+sums <- d %>% 
+  select(! contains('Log') & contains('Corr'))  %>% 
+  rowSums()
+# add parameters
+d2 <- d %>% 
+  select(Block_Penalty, Window_Size)
+d2$sum <- sums 
+# add l2
+d2$L2 <- d$L2
+# plot
+plot(d2$L2,d2$sum,pch=16,xlab='L2',ylab='Sum of Corr')
+# highlight min l2 
+minl2 <- which(d2$L2==min(d2$L2))
+points(d2$L2[minl2],y=d2$sum[minl2],col='red')
+text(x=d2$L2[minl2],y=d2$sum[minl2],labels=paste(d2$Block_Penalty[minl2],
+                               d2$Window_Size[minl2]))
+# highlight max sum  
+maxsum <- which(d2$sum==max(d2$sum))
+points(d2$L2[maxsum],y=d2$sum[maxsum],col='red')
+text(x=d2$L2[maxsum],y=d2$sum[maxsum],labels=paste(d2$Block_Penalty[maxsum],
+                                                 d2$Window_Size[maxsum]))
 
-
-####PLOTS####
-plot(d$Spearman_Corr_100kb~d$Window_Size)
-plot(d$Pearson_Corr_100kb~d$Window_Size)
-# Pearson corr
-z <-matrix(data=d$Pearson_Corr_1bp,byrow = T,nrow=length(x),ncol=length(y))
-filled.contour(x,y,z,main='Pearson_1b',xlab='Block penalty', ylab='Window size',nlevels=40)
-z <-matrix(data=d$Pearson_Corr_10kb,byrow = T,nrow=length(x),ncol=length(y))
-filled.contour(x,y,z,main='Pearson_10kb',xlab='Block penalty', ylab='Window size',nlevels=40)
-z <-matrix(data=d$Pearson_Corr_100kb,byrow = T,nrow=length(x),ncol=length(y))
-filled.contour(x,y,z,main='Pearson_100kb',xlab='Block penalty', ylab='Window size',nlevels=40)
-# L2 
-z <-matrix(data=d$Log_L2,byrow = T,nrow=length(x),ncol=length(y))
-filled.contour(x,y,z,main='log L2',xlab='Block penalty', ylab='Window size',nlevels=40)
-# Spearman corr
-z <-matrix(data=d$Spearman_Corr_1bp,byrow = T,nrow=length(x),ncol=length(y))
-filled.contour(x,y,z,main='Spearman_1b',xlab='Block penalty', ylab='Window size',nlevels=40)
-z <-matrix(data=d$Spearman_Corr_10kb,byrow = T,nrow=length(x),ncol=length(y))
-filled.contour(x,y,z,main='Spearman_10kb',xlab='Block penalty', ylab='Window size',nlevels=40)
-z <-matrix(data=d$Spearman_Corr_100kb,byrow = T,nrow=length(x),ncol=length(y))
-filled.contour(x,y,z,main='Spearman_100kb',xlab='Block penalty', ylab='Window size',nlevels=40)
