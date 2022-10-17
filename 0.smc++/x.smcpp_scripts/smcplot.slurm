@@ -19,4 +19,4 @@ module load singularity
 export SINGULARITY_BINDPATH="/scratch,/dcsrsoft,/users,/work,/reference"
 
 
-singularity run /dcsrsoft/singularity/containers/smcpp-56798c7d78b1.sif plot -g 2.7 ${1} ${2}
+singularity run /dcsrsoft/singularity/containers/smcpp-56798c7d78b1.sif plot -c ${1} ${2}

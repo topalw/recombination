@@ -14,7 +14,8 @@
 module purge
 module load singularity
 export SINGULARITY_BINDPATH="/scratch,/dcsrsoft,/users,/work,/reference"
-files=`ls ../2.smcfiles/*.gz`
-out=${1}
+pop=${1}
+outdir=${2}
+files=`ls ../2.smcfiles/*${pop}* `
 
-singularity run /dcsrsoft/singularity/containers/smcpp-56798c7d78b1.sif estimate --spline piecewise -o ${out} --cores 12 4.6e-9 ${files} 
+singularity run /dcsrsoft/singularity/containers/smcpp-56798c7d78b1.sif estimate --spline piecewise -o ${outdir} --cores 12 4.6e-9 ${files} 
