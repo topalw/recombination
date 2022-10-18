@@ -8,3 +8,6 @@ I need to explain it in more detail and make the script agnostic to input name (
 	0.aux_scripts/ has the script needed to prepare the files before the pyrho pipeline (not an actual pipeline)
 	x.pyrho_scripts/ has the scripts for the pyrho pipeline 
 	1.results_RPunrel has results (and example results) for the dataset used after identifying unrelated individuals for the refpanel
+
+
+pyrho version used is pyrho v0.1.6
