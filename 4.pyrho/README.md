@@ -12,5 +12,6 @@ I need to explain it in more detail and make the script agnostic to input name (
 
 pyrho version used is pyrho v0.1.6
 
-one liner to fix Fst mess 
+one liner to fix Fst mess   
+
 	for file in *.table ; do  ss=`echo $file | cut -d '_' -f 3,4  | cut -d '.' -f 1 `; grep -w "$ss" $file > $file.pruned ; done
