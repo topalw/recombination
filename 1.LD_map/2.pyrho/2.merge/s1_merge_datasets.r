@@ -9,7 +9,7 @@ w <- 100 # window size in number of kb
 hotspot = F
 lepmap = F
 if(w == 1 ){ hotspot=T }
-if(w == 100){ lepmap =T}
+if(w == 100){ lepmap =T }
 z <- c('ss13','ss42')
 
 # 1. PYRHO 
@@ -103,10 +103,20 @@ if(hotspot){
 }
 # 9. conditional LepMap
 if(lepmap){
-  orders <- read_delim('full_forced_orders.txt')
+  lo <- read_delim('forced_loess_sexaveraged.df')
+  lo.sex <- read_delim('forced_loess_male_female.df')
   win <- py[,c(1,2,3)]
-  win.orders <- open.windows(win,orders)
-  py <- left_join(py, win.orders, by= c('ss','start','end'))
+  win$ped.av <- rep(NA,nrow(win))
+  win$ped.m <- rep(NA,nrow(win))
+  win$ped.f <- rep(NA,nrow(win))
+  for(ss in unique(win$ss)){
+    w1 <- win[win$ss==ss,]
+    l <- lo[lo$ss == ss,]
+    lsex <- lo.sex[lo.sex$ss == ss,]
+    win$ped.av[win$ss == ss] <- window.ped(w1,l)
+    win[win$ss == ss, c(5,6)]  <- window.ped(w1,lsex,sex.based = T)
+  }
 }
+py <- left_join(py, win, by=c('ss','start','end'))
 
 write_delim(py,paste0('merged_',w,'kb_dataset.table'),quote = 'none')

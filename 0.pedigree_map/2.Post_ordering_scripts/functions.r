@@ -26,25 +26,30 @@ thetaxN.to.hald <- function(d){
 }
 
 ### FUNCTION 4 - make windowed from orders 
-open.windows <- function(windows, orders){
-  width <- windows[1,3] - windows[1,2]
-  windows$ped <- NA
-  # verify that relevant columns exist 
-  orders$av.cm <- (orders$m + orders$f)/2
-  orders <- orders[! is.na(orders$av.cm), ]
-  sss <- unique(windows$ss)
-  sss <- sss[sss %in% unique(orders$ss)]
-  for(ss in sss){
-    lm1 <- loess(orders$av.cm[orders$ss==ss]~orders$pos[orders$ss==ss],span=0.2)
-    for(i in 1:nrow(windows[windows$ss == ss,])){
-      indx <- which(lm1$x >= windows$start[i] & lm1$x < windows$end[i])
-      if(length(indx) > 0 ){
-        windows$ped[windows$ss==ss][i] <- max(lm1$fitted[indx]) - min(lm1$fitted[indx]) 
-      }
+window.ped <- function(windows, ped, sex.based = FALSE){
+  if(sex.based){
+    res <- data.frame('m'=rep(NA,nrow(windows)),
+                      'f'=rep(NA,nrow(windows)))
+    
+  } else { res <- rep(NA,nrow(windows)) }
+  for(i in 1:nrow(windows)){
+    start <- windows$start[i]
+    end <- windows$end[i]
+    indx <- which(ped$pos < end & 
+                    ped$pos >= start)
+    if(length(indx) > 1 ){
+    if(sex.based){
+      res$m[i] <- max(ped$fitted_m[indx], na.rm=T) - 
+        min(ped$fitted_m[indx], na.rm=T)
+      res$f[i] <- max(ped$fitted_f[indx], na.rm=T) - 
+        min(ped$fitted_f[indx], na.rm=T)
+    } else {
+      res[i] <- max(ped$fitted_av[indx], na.rm=T) - 
+        min(ped$fitted_av[indx], na.rm=T)
     }
+    } else { next }
   }
-  
-  return(windows)
+  return(res)
 }
 
 ### FUNCTION 5 -  remove outlier markers from LepMap3 orders 
