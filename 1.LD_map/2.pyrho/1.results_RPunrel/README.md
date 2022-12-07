@@ -8,6 +8,6 @@ for FILE in *Super-Scaffold*
 do
 SS=`echo ${FILE} | cut -d '_' -f 3,4`
 ALLPY=`echo ${FILE} | cut -d '_' -f 1,2`
-awk '{print ss "\t" $1 "\t" $2}' ss="$SS" ${FILE} >> "${ALLPY}_total.bed"
+awk '{print ss "\t" $1 "\t" $2 "\t" $3 }' ss="$SS" ${FILE} >> "${ALLPY}_total.bed"
 done
 ```
